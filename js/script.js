@@ -59,6 +59,15 @@ window.addEventListener('DOMContentLoaded', function () {
          elem.addEventListener('click', handlerMenu);
       });
 
+      menu.onclick = function() {
+         let start = Date.now();
+         let timer = function() {
+            let timePassed = Date.now() - start;
+            menu.style.left = timePassed / 5 + 'px';
+            if (timePassed > 2000) clearInterval(timer);
+         };
+      };
+
    }
    toggleMenu();
 
