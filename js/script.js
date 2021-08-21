@@ -1,9 +1,7 @@
 window.addEventListener('DOMContentLoaded', function () {
    'use strict';
 
-   //Таймер
-
-
+   // Таймер
    setInterval(function () {
       function countTimer(deadLine) {
       let timerHours = document.querySelector('#timer-hours'),
@@ -44,5 +42,42 @@ window.addEventListener('DOMContentLoaded', function () {
       countTimer('22 aug 2021');
    }, 1000);
 
+   // Меню
+   function toggleMenu(){
+
+      let btnMenu = document.querySelector('.menu'),
+         menu = document.querySelector('menu'),
+         closeBtn = document.querySelector('.close-btn'),
+         menuItems = menu.querySelectorAll('ul > li');
+
+      const handlerMenu = function(){
+         menu.classList.toggle('active-menu');
+      };
+      btnMenu.addEventListener('click', handlerMenu);
+      closeBtn.addEventListener('click', handlerMenu);
+      menuItems.forEach(function (elem) {
+         elem.addEventListener('click', handlerMenu);
+      });
+
+   }
+   toggleMenu();
+
+   // Попап
+   function togglePopUp() {
+      let popup = document.querySelector('.popup'),
+         popupBtn = document.querySelectorAll('.popup-btn'),
+         popupClose = document.querySelector('.popup-close');
+      
+      popupBtn.forEach(function (elem) {
+         elem.addEventListener('click', function () {
+            popup.style.display = 'block';
+         });
+      });
+
+      popupClose.addEventListener('click', function () {
+         popup.style.display = 'none';
+      });
+   }
+   togglePopUp();
 
 });
