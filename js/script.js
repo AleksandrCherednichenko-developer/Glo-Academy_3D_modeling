@@ -34,14 +34,14 @@ window.addEventListener('DOMContentLoaded', function () {
             function updateClock() {
                let timer = getTimeRemaning();
 
-               timerHours.textContent = timer.hours;
-               timerMinutes.textContent = timer.minutes;
-               timerSeconds.textContent = timer.seconds;
+               timerHours.textContent = ('0' + timer.hours).slice(-2);
+               timerMinutes.textContent = ('0' + timer.minutes).slice(-2);
+               timerSeconds.textContent = ('0' + timer.seconds).slice(-2);
             }
             updateClock();
          }
       }
-      countTimer('21 sept 2021');
+      countTimer('22 aug 2021');
    }, 1000);
 
 
