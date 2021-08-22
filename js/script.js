@@ -39,7 +39,7 @@ window.addEventListener('DOMContentLoaded', function () {
             updateClock();
          }
       }
-      countTimer('22 aug 2021');
+      countTimer('25 aug 2021');
    }, 1000);
 
    // Меню
@@ -59,15 +59,6 @@ window.addEventListener('DOMContentLoaded', function () {
          elem.addEventListener('click', handlerMenu);
       });
 
-      menu.onclick = function() {
-         let start = Date.now();
-         let timer = function() {
-            let timePassed = Date.now() - start;
-            menu.style.left = timePassed / 5 + 'px';
-            if (timePassed > 2000) clearInterval(timer);
-         };
-      };
-
    }
    toggleMenu();
 
@@ -79,13 +70,21 @@ window.addEventListener('DOMContentLoaded', function () {
       
       popupBtn.forEach(function (elem) {
          elem.addEventListener('click', function () {
-            popup.style.display = 'block';
+            // popup.style.display = 'block';
+            popup.classList.toggle('popup_active');
          });
       });
 
       popupClose.addEventListener('click', function () {
-         popup.style.display = 'none';
+         // popup.style.display = 'none';
+         popup.classList.toggle('popup_active');
       });
+
+      // убрать анимация при экране меньше 768px
+      let clientWidth = document.documentElement.clientWidth;
+      if(clientWidth < 768){
+         popup.style.transition = '0s';
+      }
    }
    togglePopUp();
 

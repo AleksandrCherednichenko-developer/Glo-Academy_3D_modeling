@@ -766,7 +766,10 @@ footer .web {
 }
 
 .popup {
-   display: none;
+   /* display: none; */
+   visibility: hidden;
+   opacity: 0;
+   transition: 0.5s;
    position: fixed;
    left: 0;
    top: 0;
@@ -775,6 +778,13 @@ footer .web {
    height: 100%;
    z-index: 9;
    background-color: rgba(0, 0, 0, .5)
+}
+
+.popup_active {
+   visibility: visible;
+   display: block;
+   opacity: 1;
+   transition: 0.5s;
 }
 
 .popup .main-form input {
