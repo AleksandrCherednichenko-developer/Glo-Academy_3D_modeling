@@ -59,6 +59,7 @@ window.addEventListener('DOMContentLoaded', function () {
          elem.addEventListener('click', handlerMenu);
       });
 
+      // создание анимации при переходе на пункты меню
       const anchors = document.querySelectorAll('a[href*="#"]')
       for (let anchor of anchors) {
       anchor.addEventListener('click', function (e) {
