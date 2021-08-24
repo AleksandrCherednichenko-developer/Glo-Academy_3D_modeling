@@ -79,7 +79,6 @@ window.addEventListener('DOMContentLoaded', function () {
       let popup = document.querySelector('.popup'),
          popupContent = document.querySelector('.popup-content'),
          popupBtn = document.querySelectorAll('.popup-btn'),
-         popupClose = document.querySelector('.popup-close'),
          clientWidth = document.documentElement.clientWidth;
       
       popupBtn.forEach((elem) => {
@@ -96,8 +95,18 @@ window.addEventListener('DOMContentLoaded', function () {
          });
       });
 
-      popupClose.addEventListener('click', () => {
-         popup.style.display = 'none';
+      popup.addEventListener('click', (event)=> {
+         let target = event.target;
+
+         if(target.classList.contains('popup-close')){
+            popup.style.display = 'none';
+         } else {
+            target = target.closest('.popup-content');
+            if(!target){
+               popup.style.display = 'none';
+            }
+         }
+
       });
    }
    togglePopUp();
@@ -122,7 +131,8 @@ window.addEventListener('DOMContentLoaded', function () {
 
       tabHeader.addEventListener('click', (event)=> {
          let target = event.target;
-         if (target.classList.contains('service-header-tab')){
+         target = target.closest('.service-header-tab');
+         if (target){
             tab.forEach((item, i)=> {
                if(item === target){
                   toggleTabContent(i);
