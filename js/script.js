@@ -46,31 +46,37 @@ window.addEventListener('DOMContentLoaded', function () {
    const toggleMenu = ()=> {
 
       let btnMenu = document.querySelector('.menu'),
-         menu = document.querySelector('menu'),
-         closeBtn = document.querySelector('.close-btn'),
-         menuItems = menu.querySelectorAll('ul > li');
+         menu = document.querySelector('menu');
 
+      // функция закрытия меню, при нажатии добавляет и удаляет класс active-menu
       const handlerMenu = ()=> {
          menu.classList.toggle('active-menu');
       };
+
       btnMenu.addEventListener('click', handlerMenu);
-      closeBtn.addEventListener('click', handlerMenu);
-      menuItems.forEach((elem)=> {
-         elem.addEventListener('click', handlerMenu);
+
+      // навешеваем событие при нажатии на копки в меню
+      menu.addEventListener('click', (event)=>{
+         //если нажали на ссылку с классом close-btn тогда вызываем функцию закрытия меню
+         //если нажатие произошло по ссылке которая не имеет класса, то скрывает меню и выполняем плавный переход
+         if(event.target.className === 'close-btn'){
+            handlerMenu();
+         } else {
+            handlerMenu();
+            const items = document.querySelectorAll('a[href*="#"]')
+            for (let item of items) {
+               item.addEventListener('click', (e)=> {
+                  e.preventDefault();
+                  const blockID = item.getAttribute('href').substr(1);
+                  document.getElementById(blockID).scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                  });
+               });
+            }
+         }
       });
 
-      // создание анимации при переходе на пункты меню
-      const anchors = document.querySelectorAll('a[href*="#"]')
-      for (let anchor of anchors) {
-      anchor.addEventListener('click', (e)=> {
-         e.preventDefault();
-         const blockID = anchor.getAttribute('href').substr(1);
-         document.getElementById(blockID).scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-         });
-      });
-      }
    }
    toggleMenu();
 
