@@ -244,4 +244,12 @@ window.addEventListener('DOMContentLoaded', function () {
       startSlide(2000);
    }
    slider();
+
+   //наведение на иконки команды
+   // const commandImg = document.querySelectorAll('.command__photo');
+   // for(let i=0; i <= commandImg.length; i++){
+   //    commandImg[i].addEventListener('mouseover', function(){
+   //       event.target.src = event.target.dataset.img;
+   //    });
+   // }
 });
