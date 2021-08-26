@@ -153,22 +153,19 @@ window.addEventListener('DOMContentLoaded', function () {
    const slider = ()=> {
       const slider = document.querySelector('.portfolio-content'),
          slide = document.querySelectorAll('.portfolio-item'),
-         btn = document.querySelectorAll('.portfolio-btn'),
          portfolioDots = document.querySelector('.portfolio-dots');
 
-      const createLi = ()=> {
-         const li = document.createElement('li');
-         const slideLenght = slide.length - 1;
-         // for(let i = 0; i <= slideLenght; i++){
-         //    console.log('a');
-         //    portfolioDots.appendChild(li);
-         //    li.classList.add('dot')
-         // }
-         
+      // создание dots в зависимости от кол-ва картинок
+      let slideLenght = slide.length - 1;
+
+      for(let i = 0; i <= slideLenght; i++){
+         let createli = document.createElement('li');
+         portfolioDots.appendChild(createli);
+         createli.classList.add('dot');
       };
-      createLi();
 
       const dot = document.querySelectorAll('.dot');
+      dot[0].classList.add('dot-active');
 
       let currentSlide = 0,
          interval = setInterval;
@@ -244,8 +241,7 @@ window.addEventListener('DOMContentLoaded', function () {
          }
       });
 
-      startSlide(1111500);
+      startSlide(2000);
    }
    slider();
-
 });
