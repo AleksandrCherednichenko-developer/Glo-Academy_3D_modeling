@@ -245,11 +245,13 @@ window.addEventListener('DOMContentLoaded', function () {
    }
    slider();
 
-   //наведение на иконки команды
+   // наведение на иконки команды
    // const commandImg = document.querySelectorAll('.command__photo');
    // for(let i=0; i <= commandImg.length; i++){
    //    commandImg[i].addEventListener('mouseover', function(){
-   //       event.target.src = event.target.dataset.img;
+   //       if (event.target === commandImg[i]){
+   //          event.target.src = event.target.dataset.img;
+   //       }
    //    });
    // }
 });
