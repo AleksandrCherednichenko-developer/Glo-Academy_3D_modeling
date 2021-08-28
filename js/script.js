@@ -298,14 +298,11 @@ window.addEventListener('DOMContentLoaded', function () {
 
       // если два дефисса и пробела заменять его на один
       userMess.onblur = function() {
-         if (/--+/.test(userMess.value)) {
-            let newUserMess = userMess.value.replace(/--+/g, ' - ');
+         if (/--+/.test(userMess.value) || /  +/.test(userMess.value)) {
+            // заменяет множесво дефисов на один; потом множество пробелов; потом удаляет в пробелы в начале и конце; потом удаляет дефиссы в начале и конце
+            let newUserMess = userMess.value.replace(/--+/g, ' - ').replace(/  +/g, ' ').replace(/^\s+/g, '').replace(/\s*$/,'').replace(/^-+/g, '').replace(/-*$/,'');
             userMess.value = newUserMess;
          };
-         if (/  +/.test(userMess.value)) {
-            let newUserMess = userMess.value.replace(/  +/g, ' ');
-            userMess.value = newUserMess;
-         }
       };
    };
    input();
