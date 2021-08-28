@@ -289,6 +289,24 @@ window.addEventListener('DOMContentLoaded', function () {
             userPhone.value = userPhone.value.replace(/[^0-9\-()]/ig,'');
          }
       });
+
+      // если первая буква в имени маленькая то переделывать ее в большую
+      userName.onblur = function() {
+         let newUserName = userName.value.split(" ").map(e => e[0].toUpperCase() + e.slice(1)).join(" ");
+         userName.value = newUserName
+      };
+
+      // если два дефисса и пробела заменять его на один
+      userMess.onblur = function() {
+         if (/--+/.test(userMess.value)) {
+            let newUserMess = userMess.value.replace(/--+/g, ' - ');
+            userMess.value = newUserMess;
+         };
+         if (/  +/.test(userMess.value)) {
+            let newUserMess = userMess.value.replace(/  +/g, ' ');
+            userMess.value = newUserMess;
+         }
+      };
    };
    input();
 
