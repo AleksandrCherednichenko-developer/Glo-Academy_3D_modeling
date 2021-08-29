@@ -94,9 +94,9 @@ window.addEventListener('DOMContentLoaded', function () {
                let start = Date.now();
                let timer = setInterval(() => {
                   let timePassed = Date.now() - start;
-                  popupContent.style.top = timePassed / 4 + 'px';
-                  if (timePassed > 1000) clearInterval(timer);
-               }, 10);
+                  popupContent.style.top = timePassed / 2 + 'px';
+                  if (timePassed > 400) clearInterval(timer);
+               }, 1);
             }
          });
       });
