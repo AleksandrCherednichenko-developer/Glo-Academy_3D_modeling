@@ -32,8 +32,8 @@ window.addEventListener('DOMContentLoaded', function () {
             const updateClock = ()=> {
                let timer = getTimeRemaning();
 
-               timerHours.textContent = ('0' + timer.hours).slice(-2);
-               timerMinutes.textContent = ('0' + timer.minutes).slice(-2);
+               timerHours.textContent = ('0' + timer.hours).slice(-2) + " :";
+               timerMinutes.textContent = ('0' + timer.minutes).slice(-2) + " :";
                timerSeconds.textContent = ('0' + timer.seconds).slice(-2);
             }
             updateClock();
@@ -292,6 +292,10 @@ window.addEventListener('DOMContentLoaded', function () {
 
       // если первая буква в имени маленькая то переделывать ее в большую
       userName.onblur = function() {
+         if (/  +/.test(userName.value)) {
+            let newUserName = userName.value.replace(/--+/g, ' - ').replace(/  +/g, ' ').replace(/^\s+/g, '').replace(/\s*$/,'').replace(/^-+/g, '').replace(/-*$/,'');
+            userName.value = newUserName;
+         };
          let newUserName = userName.value.split(" ").map(e => e[0].toUpperCase() + e.slice(1)).join(" ");
          userName.value = newUserName
       };
@@ -337,7 +341,7 @@ window.addEventListener('DOMContentLoaded', function () {
             total = price * typeValue * squareValue * countValue * dayValue;
          }
 
-         calcTotal.textContent = total;
+         calcTotal.textContent = Math.round(total);
       };
 
       calcBlock.addEventListener('change', (event)=> {
