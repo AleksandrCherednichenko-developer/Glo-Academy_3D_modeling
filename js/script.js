@@ -292,6 +292,10 @@ window.addEventListener('DOMContentLoaded', function () {
 
       // если первая буква в имени маленькая то переделывать ее в большую
       userName.onblur = function() {
+         if (/  +/.test(userName.value)) {
+            let newUserName = userName.value.replace(/--+/g, ' - ').replace(/  +/g, ' ').replace(/^\s+/g, '').replace(/\s*$/,'').replace(/^-+/g, '').replace(/-*$/,'');
+            userName.value = newUserName;
+         };
          let newUserName = userName.value.split(" ").map(e => e[0].toUpperCase() + e.slice(1)).join(" ");
          userName.value = newUserName
       };
