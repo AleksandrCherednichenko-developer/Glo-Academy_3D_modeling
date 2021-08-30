@@ -32,14 +32,14 @@ window.addEventListener('DOMContentLoaded', function () {
             const updateClock = ()=> {
                let timer = getTimeRemaning();
 
-               timerHours.textContent = ('0' + timer.hours).slice(-2);
-               timerMinutes.textContent = ('0' + timer.minutes).slice(-2);
+               timerHours.textContent = ('0' + timer.hours).slice(-2) + " :";
+               timerMinutes.textContent = ('0' + timer.minutes).slice(-2)+ " :";
                timerSeconds.textContent = ('0' + timer.seconds).slice(-2);
             }
             updateClock();
          }
       }
-      countTimer('27 aug 2021');
+      countTimer('30 aug 2021');
    }, 1000);
 
    // Меню
@@ -244,4 +244,71 @@ window.addEventListener('DOMContentLoaded', function () {
       startSlide(2000);
    }
    slider();
+
+   // наведение на иконки команды
+   const image = ()=> {
+      let commandImg = document.querySelectorAll('.command__photo');
+      for(let i=0; i < commandImg.length; i++){
+         let src = commandImg[i].getAttribute('src');
+         commandImg[i].addEventListener('mouseover', function(){
+               event.target.src = event.target.dataset.img;
+         });
+         commandImg[i].addEventListener('mouseout', function(){
+            event.target.src = src;
+         });
+      }
+   }
+   image();
+
+   // разрешить вводить только определённые символы
+   const input = ()=> {
+
+      // в полях калькулятора разрешить ввод только цифр
+      const calcItem = document.querySelectorAll('.calc-block input');
+
+      for(let i=0; i < calcItem.length; i++){
+         calcItem[i].addEventListener('input', function(){
+            calcItem[i].value = calcItem[i].value.replace(/[^\d.]/g, '');
+         })
+      };
+
+      // в полях для обратной связи
+      const connect = document.querySelector('.connect'),
+         userName = document.querySelector('#form2-name'),
+         userEmail = document.querySelector('#form2-email'),
+         userPhone = document.querySelector('#form2-phone'),
+         userMess = document.querySelector('#form2-message');
+
+      connect.addEventListener('input', (event)=> {
+         if(event.target.id === 'form2-name' || event.target.id === 'form2-message'){
+            userName.value = userName.value.replace(/[^а-яё\- ]/ig,'');
+            userMess.value = userMess.value.replace(/[^а-яё\- ]/ig,'');
+         } else if(event.target.id === 'form2-email'){
+            userEmail.value = userEmail.value.replace(/[^a-z\-_.!@~*']/ig,'');
+         } else if(event.target.id === 'form2-phone'){
+            userPhone.value = userPhone.value.replace(/[^0-9\-()]/ig,'');
+         }
+      });
+
+      // если первая буква в имени маленькая то переделывать ее в большую
+      userName.onblur = function() {
+         if (/  +/.test(userName.value)) {
+            let newUserName = userName.value.replace(/--+/g, ' - ').replace(/  +/g, ' ').replace(/^\s+/g, '').replace(/\s*$/,'').replace(/^-+/g, '').replace(/-*$/,'');
+            userName.value = newUserName;
+         };
+         let newUserName = userName.value.split(" ").map(e => e[0].toUpperCase() + e.slice(1)).join(" ");
+         userName.value = newUserName
+      };
+
+      // если два дефисса и пробела заменять его на один
+      userMess.onblur = function() {
+         if (/--+/.test(userMess.value) || /  +/.test(userMess.value)) {
+            // заменяет множесво дефисов на один; потом множество пробелов; потом удаляет в пробелы в начале и конце; потом удаляет дефиссы в начале и конце
+            let newUserMess = userMess.value.replace(/--+/g, ' - ').replace(/  +/g, ' ').replace(/^\s+/g, '').replace(/\s*$/,'').replace(/^-+/g, '').replace(/-*$/,'');
+            userMess.value = newUserMess;
+         };
+      };
+   };
+   input();
+
 });
