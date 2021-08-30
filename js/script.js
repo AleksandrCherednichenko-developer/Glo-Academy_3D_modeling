@@ -21,7 +21,7 @@ window.addEventListener('DOMContentLoaded', function () {
                'minutes': minutes,
                'seconds': seconds,
             };
-         }
+         };
 
          if (timeRemaining < 0){
             timerAction.textContent = 'Акция завершенна';
@@ -32,14 +32,14 @@ window.addEventListener('DOMContentLoaded', function () {
             const updateClock = ()=> {
                let timer = getTimeRemaning();
 
-               timerHours.textContent = ('0' + timer.hours).slice(-2) + " :";
-               timerMinutes.textContent = ('0' + timer.minutes).slice(-2)+ " :";
+               timerHours.textContent = ('0' + timer.hours).slice(-2);
+               timerMinutes.textContent = ('0' + timer.minutes).slice(-2);
                timerSeconds.textContent = ('0' + timer.seconds).slice(-2);
-            }
+            };
             updateClock();
          }
-      }
-      countTimer('30 aug 2021');
+      };
+      countTimer('3 sept 2021');
    }, 1000);
 
    // Меню
@@ -114,7 +114,7 @@ window.addEventListener('DOMContentLoaded', function () {
          }
 
       });
-   }
+   };
    togglePopUp();
 
    // Табы
@@ -146,7 +146,7 @@ window.addEventListener('DOMContentLoaded', function () {
             });
          }
       });
-   }
+   };
    tabs();
 
    // Слайдер
@@ -242,7 +242,7 @@ window.addEventListener('DOMContentLoaded', function () {
       });
 
       startSlide(2000);
-   }
+   };
    slider();
 
    // наведение на иконки команды
@@ -257,7 +257,7 @@ window.addEventListener('DOMContentLoaded', function () {
             event.target.src = src;
          });
       }
-   }
+   };
    image();
 
    // разрешить вводить только определённые символы
@@ -357,7 +357,59 @@ window.addEventListener('DOMContentLoaded', function () {
             counSum();
          }
       })
-   }
+   };
    calc(100);
+
+   //работа с первой формой ajax
+   const sendForm = ()=> {
+      const errorMessage = 'Что то пошло не так...',
+         loadMessage = 'Загрузка...',
+         successMessage = 'Спасибо! Мы скоро свами свяжимся!';
+      
+      const form = document.getElementById('form1');
+
+      const statusMessage = document.createElement('div');
+      statusMessage.style.cssText = 'font-size: 2rem;';
+
+      form.addEventListener('submit', (event)=> {
+         event.preventDefault();
+         form.appendChild(statusMessage);
+
+         statusMessage.textContent = loadMessage;
+         const formData = new FormData(form);
+         let body = {};
+         for (let val of formData.entries()){
+            body[val[0]] = val[1];
+         };
+         postData(body, 
+            ()=>{
+               statusMessage.textContent = successMessage;
+            },
+            (error)=> {
+               console.error(error);
+               statusMessage.textContent = errorMessage;
+            }
+         );
+      });
+
+      const postData = (body, outputData, errorData)=> {
+         const request = new XMLHttpRequest();
+         request.addEventListener('readystatechange', ()=>{
+            if (request.readyState !== 4){
+               return;
+            }
+            if (request.status === 200){
+               outputData();
+            } else {
+               errorData(request.status);
+            }
+         });
+
+         request.open('POST', './server.php');
+         request.setRequestHeader('Content-Type', 'application/json');
+         request.send(JSON.stringify(body));
+      };
+   };
+   sendForm();
 
 });
