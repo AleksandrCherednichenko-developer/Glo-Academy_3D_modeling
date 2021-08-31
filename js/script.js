@@ -46,38 +46,39 @@ window.addEventListener('DOMContentLoaded', function () {
    const toggleMenu = ()=> {
 
       let btnMenu = document.querySelector('.menu'),
-         menu = document.querySelector('menu');
+         menu = document.querySelector('menu'),
+         items = menu.querySelectorAll('ul li a');
 
-      // функция закрытия меню, при нажатии добавляет и удаляет класс active-menu
       const handlerMenu = ()=> {
          menu.classList.toggle('active-menu');
       };
 
+      // плавный переход при нажатии на элементы меню
+      const smoothLinks = document.querySelectorAll('a[href^="#"]');
+      for (let smoothLink of smoothLinks) {
+         smoothLink.addEventListener('click', function (e) {
+            e.preventDefault();
+            const id = smoothLink.getAttribute('href');
+            document.querySelector(id).scrollIntoView({
+                  behavior: 'smooth',
+                  block: 'start'
+            });
+         });
+      }
+
       btnMenu.addEventListener('click', handlerMenu);
 
-      // навешиваем событие при нажатии на копки в меню
-      menu.addEventListener('click', (event)=>{
-         //если нажали на ссылку с классом close-btn тогда вызываем функцию закрытия меню
-         //если нажатие произошло по ссылке которая не имеет класса, то скрывает меню и выполняем плавный переход
-         if(event.target.className === 'close-btn'){
-            handlerMenu();
-         } else {
-            handlerMenu();
-            const items = document.querySelectorAll('a[href*="#"]')
-            for (let item of items) {
-               item.addEventListener('click', (e)=> {
-                  e.preventDefault();
-                  const blockID = item.getAttribute('href').substr(1);
-                  document.getElementById(blockID).scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                  });
-               });
+      for (let i = 0; i < items.length; i++){
+         menu.addEventListener('click', (event)=>{
+            if(event.target.className === 'close-btn'){
+               handlerMenu();
+            } else if(event.target === items[i]){
+               handlerMenu();
             }
-         }
-      });
+         });
+      };
 
-   }
+   };
    toggleMenu();
 
    // Попап
@@ -265,7 +266,6 @@ window.addEventListener('DOMContentLoaded', function () {
 
       // в полях калькулятора разрешить ввод только цифр
       const calcItem = document.querySelectorAll('.calc-block input');
-
       for(let i=0; i < calcItem.length; i++){
          calcItem[i].addEventListener('input', function(){
             calcItem[i].value = calcItem[i].value.replace(/[^\d.]/g, '');
@@ -277,40 +277,45 @@ window.addEventListener('DOMContentLoaded', function () {
          userName = document.getElementsByName('user_name'),
          userEmail = document.getElementsByName('user_email'),
          userPhone = document.getElementsByName('user_phone'),
-         userMess = document.querySelector('.mess');
+         userMess = document.querySelector('.mess'),
+         userFormInput = document.querySelectorAll('form input'),
+         userFormBtn = document.querySelectorAll('form .form-btn');
 
       for (let i = 0; i < userForm.length; i++){
          userForm[i].addEventListener('input', (event)=> {
-            if(event.target.name === 'user_name'){
+            if(event.target.name === 'user_name' ||
+               event.target.name === 'user_email' ||
+               event.target.name === 'user_phone' ||
+               event.target.name === 'user_message')
+            {
                userName[i].value = userName[i].value.replace(/[^а-яё\ ]/ig,'');
-            } else if(event.target.name === 'user_email'){
-               userEmail[i].value = userEmail[i].value.replace(/[^a-z\-_.!@~*']/ig,'');
-            } else if(event.target.name === 'user_phone'){
-               userPhone[i].value = userPhone[i].value.replace(/[^0-9+]/ig,'');
-            } else if(event.target.name === 'user_message'){
+               userEmail[i].value = userEmail[i].value.replace(/[^a-z0-9\-_.!@~*']/ig,'');
+               userPhone[i].value = userPhone[i].value.replace(/[^0-9+]{7,13}/ig,'');
                userMess.value = userMess.value.replace(/[^а-яё0-9,.!?:;\ ]/g,'');
             }
-         });
 
-         // если первая буква в имени маленькая то переделывать ее в большую
-         userName[i].onblur = function() {
-            if (/  +/.test(userName[i].value)) {
-               let newUserName = userName[i].value.replace(/  +/g, ' ').replace(/^\s+/g, '').replace(/\s*$/,'');
-               userName[i].value = newUserName;
+            // если первая буква в имени маленькая то переделывать ее в большую
+            userName[i].onblur = function() {
+               if (/  +/.test(userName[i].value)) {
+                  let newUserName = userName[i].value.replace(/  +/g, ' ').replace(/^\s+/g, '').replace(/\s*$/,'');
+                  userName[i].value = newUserName;
+               };
+               let newUserName = userName[i].value.split(" ").map(e => e[0].toUpperCase() + e.slice(1)).join(" ");
+               userName[i].value = newUserName
             };
-            let newUserName = userName[i].value.split(" ").map(e => e[0].toUpperCase() + e.slice(1)).join(" ");
-            userName[i].value = newUserName
-         };
-      }
 
-      // если два дефисса и пробела заменять его на один
-      userMess.onblur = function() {
-         if (/--+/.test(userMess.value) || /  +/.test(userMess.value)) {
-            // заменяет множесво дефисов на один; потом множество пробелов; потом удаляет в пробелы в начале и конце; потом удаляет дефиссы в начале и конце
-            let newUserMess = userMess.value.replace(/--+/g, ' - ').replace(/  +/g, ' ').replace(/^\s+/g, '').replace(/\s*$/,'').replace(/^-+/g, '').replace(/-*$/,'');
-            userMess.value = newUserMess;
-         };
+            // если два дефисса и пробела заменять его на один
+            userMess.onblur = function() {
+               if (/--+/.test(userMess.value) || /  +/.test(userMess.value)) {
+                  // заменяет множесво дефисов на один; потом множество пробелов; потом удаляет в пробелы в начале и конце; потом удаляет дефиссы в начале и конце
+                  let newUserMess = userMess.value.replace(/--+/g, ' - ').replace(/  +/g, ' ').replace(/^\s+/g, '').replace(/\s*$/,'').replace(/^-+/g, '').replace(/-*$/,'');
+                  userMess.value = newUserMess;
+               };
+            };
+
+         });
       };
+
    };
    input();
 
