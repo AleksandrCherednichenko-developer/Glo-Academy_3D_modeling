@@ -365,7 +365,7 @@ window.addEventListener('DOMContentLoaded', function () {
    };
    calc(100);
 
-   //работа с первой формой ajax
+   //работа с формой ajax
    const sendForm = ()=> {
       const errorMessage = 'Что то пошло не так...',
          loadMessage = 'Загрузка...',
