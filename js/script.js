@@ -261,7 +261,7 @@ window.addEventListener('DOMContentLoaded', function () {
    };
    image();
 
-   // разрешить вводить только определённые символы
+   // валидация
    const input = ()=> {
 
       // в полях калькулятора разрешить ввод только цифр
@@ -277,9 +277,7 @@ window.addEventListener('DOMContentLoaded', function () {
          userName = document.getElementsByName('user_name'),
          userEmail = document.getElementsByName('user_email'),
          userPhone = document.getElementsByName('user_phone'),
-         userMess = document.querySelector('.mess'),
-         userFormInput = document.querySelectorAll('form input'),
-         userFormBtn = document.querySelectorAll('form .form-btn');
+         userMess = document.querySelector('.mess');
 
       for (let i = 0; i < userForm.length; i++){
          userForm[i].addEventListener('input', (event)=> {
@@ -290,30 +288,29 @@ window.addEventListener('DOMContentLoaded', function () {
             {
                userName[i].value = userName[i].value.replace(/[^а-яё\ ]/ig,'');
                userEmail[i].value = userEmail[i].value.replace(/[^a-z0-9\-_.!@~*']/ig,'');
-               userPhone[i].value = userPhone[i].value.replace(/[^0-9+]{7,13}/ig,'');
+               userPhone[i].value = userPhone[i].value.replace(/[^0-9+]/g,'');
                userMess.value = userMess.value.replace(/[^а-яё0-9,.!?:;\ ]/g,'');
             }
-
-            // если первая буква в имени маленькая то переделывать ее в большую
-            userName[i].onblur = function() {
-               if (/  +/.test(userName[i].value)) {
-                  let newUserName = userName[i].value.replace(/  +/g, ' ').replace(/^\s+/g, '').replace(/\s*$/,'');
-                  userName[i].value = newUserName;
-               };
-               let newUserName = userName[i].value.split(" ").map(e => e[0].toUpperCase() + e.slice(1)).join(" ");
-               userName[i].value = newUserName
-            };
-
-            // если два дефисса и пробела заменять его на один
-            userMess.onblur = function() {
-               if (/--+/.test(userMess.value) || /  +/.test(userMess.value)) {
-                  // заменяет множесво дефисов на один; потом множество пробелов; потом удаляет в пробелы в начале и конце; потом удаляет дефиссы в начале и конце
-                  let newUserMess = userMess.value.replace(/--+/g, ' - ').replace(/  +/g, ' ').replace(/^\s+/g, '').replace(/\s*$/,'').replace(/^-+/g, '').replace(/-*$/,'');
-                  userMess.value = newUserMess;
-               };
-            };
-
          });
+
+         // если первая буква в имени маленькая то переделывать ее в большую
+         userName[i].onblur = function() {
+            if (/  +/.test(userName[i].value)) {
+               let newUserName = userName[i].value.replace(/  +/g, ' ').replace(/^\s+/g, '').replace(/\s*$/,'');
+               userName[i].value = newUserName;
+            };
+            let newUserName = userName[i].value.split(" ").map(e => e[0].toUpperCase() + e.slice(1)).join(" ");
+            userName[i].value = newUserName
+         };
+      };
+
+      // если два дефисса и пробела заменять его на один
+      userMess.onblur = function() {
+         if (/--+/.test(userMess.value) || /  +/.test(userMess.value)) {
+            // заменяет множесво дефисов на один; потом множество пробелов; потом удаляет в пробелы в начале и конце; потом удаляет дефиссы в начале и конце
+            let newUserMess = userMess.value.replace(/--+/g, ' - ').replace(/  +/g, ' ').replace(/^\s+/g, '').replace(/\s*$/,'').replace(/^-+/g, '').replace(/-*$/,'');
+            userMess.value = newUserMess;
+         };
       };
 
    };
@@ -383,6 +380,14 @@ window.addEventListener('DOMContentLoaded', function () {
          userForm[i].addEventListener('submit', (event)=> {
             event.preventDefault();
 
+            const userFormInput = userForm[i].querySelectorAll('input');
+            for (let i = 0; i < userFormInput.length; i++){
+               if (userFormInput[i].value === ''){
+                  alert ('Все поля должны быть заполненны! Заполние оставшиеся поля и повторите отправку.');
+                  return;
+               }
+            }
+
             const formPopup = document.querySelector("form:not([class])");
             if (userForm[i] === formPopup){
                statusMessage.style.cssText = 'color: white;';
@@ -401,10 +406,11 @@ window.addEventListener('DOMContentLoaded', function () {
                   userForm[i].reset();
                },
                (error)=> {
-                  console.error(error);
                   statusMessage.textContent = errorMessage;
+                  console.error(error);
                }
             );
+            setTimeout(function() {statusMessage.remove();}, 5000);
          });
 
          const postData = (body, outputData, errorData)=> {
