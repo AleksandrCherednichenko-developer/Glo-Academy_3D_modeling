@@ -277,7 +277,8 @@ window.addEventListener('DOMContentLoaded', function () {
          userName = document.getElementsByName('user_name'),
          userEmail = document.getElementsByName('user_email'),
          userPhone = document.getElementsByName('user_phone'),
-         userMess = document.querySelector('.mess');
+         userMess = document.querySelector('.mess'),
+         formBtn = document.querySelectorAll('form button');
 
       for (let i = 0; i < userForm.length; i++){
          userForm[i].addEventListener('input', (event)=> {
@@ -290,17 +291,26 @@ window.addEventListener('DOMContentLoaded', function () {
                userEmail[i].value = userEmail[i].value.replace(/[^a-z0-9\-_.!@~*']/ig,'');
                userPhone[i].value = userPhone[i].value.replace(/[^0-9+]/g,'');
                userMess.value = userMess.value.replace(/[^а-яё0-9,.!?:;\ ]/g,'');
+               formBtn[i].disabled = false;
             }
          });
+
+         userPhone[i].onblur = function() {
+            if (!(/^[0-9+]{7,13}$/.test(userPhone[i].value))) {
+               alert('Введите корректный номер телефона (номер должен содержать 7-13 символов)');
+               formBtn[i].disabled = true;
+               userPhone[i].focus;
+            }
+         };
 
          // если первая буква в имени маленькая то переделывать ее в большую
          userName[i].onblur = function() {
             if (/  +/.test(userName[i].value)) {
-               let newUserName = userName[i].value.replace(/  +/g, ' ').replace(/^\s+/g, '').replace(/\s*$/,'');
-               userName[i].value = newUserName;
+               let correctUserName = userName[i].value.replace(/  +/g, ' ').replace(/^\s+/g, '').replace(/\s*$/,'');
+               userName[i].value = correctUserName;
             };
-            let newUserName = userName[i].value.split(" ").map(e => e[0].toUpperCase() + e.slice(1)).join(" ");
-            userName[i].value = newUserName
+            let correctUserName = userName[i].value.split(" ").map(e => e[0].toUpperCase() + e.slice(1)).join(" ");
+            userName[i].value = correctUserName
          };
       };
 
