@@ -21,7 +21,7 @@ window.addEventListener('DOMContentLoaded', function () {
                'minutes': minutes,
                'seconds': seconds,
             };
-         }
+         };
 
          if (timeRemaining < 0){
             timerAction.textContent = 'Акция завершенна';
@@ -32,52 +32,53 @@ window.addEventListener('DOMContentLoaded', function () {
             const updateClock = ()=> {
                let timer = getTimeRemaning();
 
-               timerHours.textContent = ('0' + timer.hours).slice(-2) + " :";
-               timerMinutes.textContent = ('0' + timer.minutes).slice(-2)+ " :";
+               timerHours.textContent = ('0' + timer.hours).slice(-2);
+               timerMinutes.textContent = ('0' + timer.minutes).slice(-2);
                timerSeconds.textContent = ('0' + timer.seconds).slice(-2);
-            }
+            };
             updateClock();
          }
-      }
-      countTimer('30 aug 2021');
+      };
+      countTimer('3 sept 2021');
    }, 1000);
 
    // Меню
    const toggleMenu = ()=> {
 
       let btnMenu = document.querySelector('.menu'),
-         menu = document.querySelector('menu');
+         menu = document.querySelector('menu'),
+         items = menu.querySelectorAll('ul li a');
 
-      // функция закрытия меню, при нажатии добавляет и удаляет класс active-menu
       const handlerMenu = ()=> {
          menu.classList.toggle('active-menu');
       };
 
+      // плавный переход при нажатии на элементы меню
+      const smoothLinks = document.querySelectorAll('a[href^="#"]');
+      for (let smoothLink of smoothLinks) {
+         smoothLink.addEventListener('click', function (e) {
+            e.preventDefault();
+            const id = smoothLink.getAttribute('href');
+            document.querySelector(id).scrollIntoView({
+                  behavior: 'smooth',
+                  block: 'start'
+            });
+         });
+      }
+
       btnMenu.addEventListener('click', handlerMenu);
 
-      // навешиваем событие при нажатии на копки в меню
-      menu.addEventListener('click', (event)=>{
-         //если нажали на ссылку с классом close-btn тогда вызываем функцию закрытия меню
-         //если нажатие произошло по ссылке которая не имеет класса, то скрывает меню и выполняем плавный переход
-         if(event.target.className === 'close-btn'){
-            handlerMenu();
-         } else {
-            handlerMenu();
-            const items = document.querySelectorAll('a[href*="#"]')
-            for (let item of items) {
-               item.addEventListener('click', (e)=> {
-                  e.preventDefault();
-                  const blockID = item.getAttribute('href').substr(1);
-                  document.getElementById(blockID).scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                  });
-               });
+      for (let i = 0; i < items.length; i++){
+         menu.addEventListener('click', (event)=>{
+            if(event.target.className === 'close-btn'){
+               handlerMenu();
+            } else if(event.target === items[i]){
+               handlerMenu();
             }
-         }
-      });
+         });
+      };
 
-   }
+   };
    toggleMenu();
 
    // Попап
@@ -114,7 +115,7 @@ window.addEventListener('DOMContentLoaded', function () {
          }
 
       });
-   }
+   };
    togglePopUp();
 
    // Табы
@@ -146,7 +147,7 @@ window.addEventListener('DOMContentLoaded', function () {
             });
          }
       });
-   }
+   };
    tabs();
 
    // Слайдер
@@ -242,7 +243,7 @@ window.addEventListener('DOMContentLoaded', function () {
       });
 
       startSlide(2000);
-   }
+   };
    slider();
 
    // наведение на иконки команды
@@ -257,47 +258,50 @@ window.addEventListener('DOMContentLoaded', function () {
             event.target.src = src;
          });
       }
-   }
+   };
    image();
 
-   // разрешить вводить только определённые символы
+   // валидация
    const input = ()=> {
 
       // в полях калькулятора разрешить ввод только цифр
       const calcItem = document.querySelectorAll('.calc-block input');
-
       for(let i=0; i < calcItem.length; i++){
          calcItem[i].addEventListener('input', function(){
             calcItem[i].value = calcItem[i].value.replace(/[^\d.]/g, '');
          })
       };
 
-      // в полях для обратной связи
-      const connect = document.querySelector('.connect'),
-         userName = document.querySelector('#form2-name'),
-         userEmail = document.querySelector('#form2-email'),
-         userPhone = document.querySelector('#form2-phone'),
-         userMess = document.querySelector('#form2-message');
+      // валидация для форм
+      const userForm = document.getElementsByName('user_form'),
+         userName = document.getElementsByName('user_name'),
+         userEmail = document.getElementsByName('user_email'),
+         userPhone = document.getElementsByName('user_phone'),
+         userMess = document.querySelector('.mess');
 
-      connect.addEventListener('input', (event)=> {
-         if(event.target.id === 'form2-name' || event.target.id === 'form2-message'){
-            userName.value = userName.value.replace(/[^а-яё\- ]/ig,'');
-            userMess.value = userMess.value.replace(/[^а-яё\- ]/ig,'');
-         } else if(event.target.id === 'form2-email'){
-            userEmail.value = userEmail.value.replace(/[^a-z\-_.!@~*']/ig,'');
-         } else if(event.target.id === 'form2-phone'){
-            userPhone.value = userPhone.value.replace(/[^0-9\-()]/ig,'');
-         }
-      });
+      for (let i = 0; i < userForm.length; i++){
+         userForm[i].addEventListener('input', (event)=> {
+            if(event.target.name === 'user_name' ||
+               event.target.name === 'user_email' ||
+               event.target.name === 'user_phone' ||
+               event.target.name === 'user_message')
+            {
+               userName[i].value = userName[i].value.replace(/[^а-яё\ ]/ig,'');
+               userEmail[i].value = userEmail[i].value.replace(/[^a-z0-9\-_.!@~*']/ig,'');
+               userPhone[i].value = userPhone[i].value.replace(/[^0-9+]/g,'');
+               userMess.value = userMess.value.replace(/[^а-яё0-9,.!?:;\ ]/g,'');
+            }
+         });
 
-      // если первая буква в имени маленькая то переделывать ее в большую
-      userName.onblur = function() {
-         if (/  +/.test(userName.value)) {
-            let newUserName = userName.value.replace(/--+/g, ' - ').replace(/  +/g, ' ').replace(/^\s+/g, '').replace(/\s*$/,'').replace(/^-+/g, '').replace(/-*$/,'');
-            userName.value = newUserName;
+         // если первая буква в имени маленькая то переделывать ее в большую
+         userName[i].onblur = function() {
+            if (/  +/.test(userName[i].value)) {
+               let newUserName = userName[i].value.replace(/  +/g, ' ').replace(/^\s+/g, '').replace(/\s*$/,'');
+               userName[i].value = newUserName;
+            };
+            let newUserName = userName[i].value.split(" ").map(e => e[0].toUpperCase() + e.slice(1)).join(" ");
+            userName[i].value = newUserName
          };
-         let newUserName = userName.value.split(" ").map(e => e[0].toUpperCase() + e.slice(1)).join(" ");
-         userName.value = newUserName
       };
 
       // если два дефисса и пробела заменять его на один
@@ -308,6 +312,7 @@ window.addEventListener('DOMContentLoaded', function () {
             userMess.value = newUserMess;
          };
       };
+
    };
    input();
 
@@ -357,7 +362,77 @@ window.addEventListener('DOMContentLoaded', function () {
             counSum();
          }
       })
-   }
+   };
    calc(100);
+
+   //работа с формой ajax
+   const sendForm = ()=> {
+      const errorMessage = 'Что то пошло не так...',
+         loadMessage = 'Загрузка...',
+         successMessage = 'Спасибо! Мы скоро свами свяжимся!';
+
+      const userForm = document.getElementsByName('user_form');
+
+      const statusMessage = document.createElement('div');
+      statusMessage.style.cssText = 'font-size: 2rem;';
+
+      for (let i = 0; i < userForm.length; i++){
+         userForm[i].addEventListener('submit', (event)=> {
+            event.preventDefault();
+
+            const userFormInput = userForm[i].querySelectorAll('input');
+            for (let i = 0; i < userFormInput.length; i++){
+               if (userFormInput[i].value === ''){
+                  alert ('Все поля должны быть заполненны! Заполние оставшиеся поля и повторите отправку.');
+                  return;
+               }
+            }
+
+            const formPopup = document.querySelector("form:not([class])");
+            if (userForm[i] === formPopup){
+               statusMessage.style.cssText = 'color: white;';
+            }
+            userForm[i].appendChild(statusMessage);
+
+            statusMessage.textContent = loadMessage;
+            const formData = new FormData(userForm[i]);
+            let body = {};
+            for (let val of formData.entries()){
+               body[val[0]] = val[1];
+            };
+            postData(body,
+               ()=>{
+                  statusMessage.textContent = successMessage;
+                  userForm[i].reset();
+               },
+               (error)=> {
+                  statusMessage.textContent = errorMessage;
+                  console.error(error);
+               }
+            );
+            setTimeout(function() {statusMessage.remove();}, 5000);
+         });
+
+         const postData = (body, outputData, errorData)=> {
+            const request = new XMLHttpRequest();
+            request.addEventListener('readystatechange', ()=>{
+               if (request.readyState !== 4){
+                  return;
+               }
+               if (request.status === 200){
+                  outputData();
+               } else {
+                  errorData(request.status);
+               }
+            });
+   
+            request.open('POST', './server.php');
+            request.setRequestHeader('Content-Type', 'application/json');
+            request.send(JSON.stringify(body));
+         };
+      };
+
+   };
+   sendForm();
 
 });
