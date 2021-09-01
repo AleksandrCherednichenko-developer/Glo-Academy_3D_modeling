@@ -293,7 +293,6 @@ window.addEventListener('DOMContentLoaded', function () {
             }
          });
 
-
          // маска для ввода номера телефона
          [].forEach.call( userPhone, function(input) {
             var keyCode;
@@ -330,12 +329,13 @@ window.addEventListener('DOMContentLoaded', function () {
 
          // если первая буква в имени маленькая то переделывать ее в большую
          userName[i].onblur = function() {
+            let correctUserName;
             if (/  +/.test(userName[i].value)) {
-               let correctUserName = userName[i].value.replace(/  +/g, ' ').replace(/^\s+/g, '').replace(/\s*$/,'');
+               correctUserName = userName[i].value.replace(/  +/g, ' ').replace(/^\s+/g, '').replace(/\s*$/,'');
                userName[i].value = correctUserName;
             };
-            let correctUserName = userName[i].value.split(" ").map(e => e[0].toUpperCase() + e.slice(1)).join(" ");
-            userName[i].value = correctUserName
+            correctUserName = userName[i].value.split(" ").map(e => e[0].toUpperCase() + e.slice(1)).join(" ");
+            userName[i].value = correctUserName;
          };
       }
 
@@ -437,7 +437,10 @@ window.addEventListener('DOMContentLoaded', function () {
                body[val[0]] = val[1];
             };
             postData(body)
-               .then(()=>{
+               .then((response)=>{
+                  if(response.status !== 200){
+                     throw new Error('status network not 200');
+                  }
                   statusMessage.textContent = successMessage;
                   userForm[i].reset();
                })
@@ -449,23 +452,14 @@ window.addEventListener('DOMContentLoaded', function () {
          });
 
          const postData = (body) => {
-            return new Promise((resolve, reject) =>{
-               const request = new XMLHttpRequest();
-               request.addEventListener('readystatechange', ()=>{
-                  if (request.readyState !== 4){
-                     return;
-                  }
-                  if (request.status === 200){
-                     resolve();
-                  } else {
-                     reject(request.status);
-                  }
-               });
-
-               request.open('POST', './server.php');
-               request.setRequestHeader('Content-Type', 'application/json');
-               request.send(JSON.stringify(body));
-            })
+            return fetch('./server.php',
+            {
+               method: 'POST',
+               headers: {
+                  'Content-Type': 'application/json'
+               },
+               body: JSON.stringify(body),
+            });
          };
       };
 
