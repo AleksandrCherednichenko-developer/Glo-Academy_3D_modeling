@@ -284,24 +284,49 @@ window.addEventListener('DOMContentLoaded', function () {
          userForm[i].addEventListener('input', (event)=> {
             if(event.target.name === 'user_name' ||
                event.target.name === 'user_email' ||
-               event.target.name === 'user_phone' ||
                event.target.name === 'user_message')
             {
                userName[i].value = userName[i].value.replace(/[^а-яё\ ]/ig,'');
                userEmail[i].value = userEmail[i].value.replace(/[^a-z0-9\-_.!@~*']/ig,'');
-               userPhone[i].value = userPhone[i].value.replace(/[^0-9+]/g,'');
+               userEmail[i].value = userEmail[i].value.replace(/\w+@\w+\.\w{4,4}/ig,'');
                userMess.value = userMess.value.replace(/[^а-яё0-9,.!?:;\ ]/g,'');
-               formBtn[i].disabled = false;
             }
          });
 
-         userPhone[i].onblur = function() {
-            if (!(/^[0-9+]{7,13}$/.test(userPhone[i].value))) {
-               alert('Введите корректный номер телефона (номер должен содержать 7-13 символов)');
-               formBtn[i].disabled = true;
-               userPhone[i].focus;
+
+         // маска для ввода номера телефона
+         [].forEach.call( userPhone, function(input) {
+            var keyCode;
+            function mask(event) {
+               event.keyCode && (keyCode = event.keyCode);
+               var pos = this.selectionStart;
+               if (pos < 3) event.preventDefault();
+               var matrix = "+7 (___) ___ ____",
+                  i = 0,
+                  def = matrix.replace(/\D/g, ""),
+                  val = this.value.replace(/\D/g, ""),
+                  new_value = matrix.replace(/[_\d]/g, function(a) {
+                        return i < val.length ? val.charAt(i++) || def.charAt(i) : a
+                  });
+               i = new_value.indexOf("_");
+               if (i != -1) {
+                  i < 5 && (i = 3);
+                  new_value = new_value.slice(0, i)
+               }
+               var reg = matrix.substr(0, this.value.length).replace(/_+/g,
+                  function(a) {
+                        return "\\d{1," + a.length + "}"
+                  }).replace(/[+()]/g, "\\$&");
+               reg = new RegExp("^" + reg + "$");
+               if (!reg.test(this.value) || this.value.length < 5 || keyCode > 47 && keyCode < 58) this.value = new_value;
+               if (event.type == "blur" && this.value.length < 5)  this.value = ""
             }
-         };
+            input.addEventListener("input", mask, false);
+            input.addEventListener("focus", mask, false);
+            input.addEventListener("blur", mask, false);
+            input.addEventListener("keydown", mask, false)
+         });
+
 
          // если первая буква в имени маленькая то переделывать ее в большую
          userName[i].onblur = function() {
@@ -312,7 +337,7 @@ window.addEventListener('DOMContentLoaded', function () {
             let correctUserName = userName[i].value.split(" ").map(e => e[0].toUpperCase() + e.slice(1)).join(" ");
             userName[i].value = correctUserName
          };
-      };
+      }
 
       // если два дефисса и пробела заменять его на один
       userMess.onblur = function() {
@@ -398,7 +423,8 @@ window.addEventListener('DOMContentLoaded', function () {
                }
             }
 
-            const formPopup = document.querySelector("form:not([class])");
+            const popup = document.querySelector('.popup'),
+               formPopup = document.querySelector("form:not([class])");
             if (userForm[i] === formPopup){
                statusMessage.style.cssText = 'color: white;';
             }
@@ -419,7 +445,7 @@ window.addEventListener('DOMContentLoaded', function () {
                   statusMessage.textContent = errorMessage;
                   console.error(error);
                });
-            setTimeout(function() {statusMessage.remove();}, 5000);
+            setTimeout(function() {statusMessage.remove();popup.style.display = "none"}, 5000);
          });
 
          const postData = (body) => {
