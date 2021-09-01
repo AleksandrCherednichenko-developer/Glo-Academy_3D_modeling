@@ -277,32 +277,67 @@ window.addEventListener('DOMContentLoaded', function () {
          userName = document.getElementsByName('user_name'),
          userEmail = document.getElementsByName('user_email'),
          userPhone = document.getElementsByName('user_phone'),
-         userMess = document.querySelector('.mess');
+         userMess = document.querySelector('.mess'),
+         formBtn = document.querySelectorAll('form button');
 
       for (let i = 0; i < userForm.length; i++){
          userForm[i].addEventListener('input', (event)=> {
             if(event.target.name === 'user_name' ||
                event.target.name === 'user_email' ||
-               event.target.name === 'user_phone' ||
                event.target.name === 'user_message')
             {
                userName[i].value = userName[i].value.replace(/[^а-яё\ ]/ig,'');
                userEmail[i].value = userEmail[i].value.replace(/[^a-z0-9\-_.!@~*']/ig,'');
-               userPhone[i].value = userPhone[i].value.replace(/[^0-9+]/g,'');
+               userEmail[i].value = userEmail[i].value.replace(/\w+@\w+\.\w{4,4}/ig,'');
                userMess.value = userMess.value.replace(/[^а-яё0-9,.!?:;\ ]/g,'');
             }
          });
 
+
+         // маска для ввода номера телефона
+         [].forEach.call( userPhone, function(input) {
+            var keyCode;
+            function mask(event) {
+               event.keyCode && (keyCode = event.keyCode);
+               var pos = this.selectionStart;
+               if (pos < 3) event.preventDefault();
+               var matrix = "+7 (___) ___ ____",
+                  i = 0,
+                  def = matrix.replace(/\D/g, ""),
+                  val = this.value.replace(/\D/g, ""),
+                  new_value = matrix.replace(/[_\d]/g, function(a) {
+                        return i < val.length ? val.charAt(i++) || def.charAt(i) : a
+                  });
+               i = new_value.indexOf("_");
+               if (i != -1) {
+                  i < 5 && (i = 3);
+                  new_value = new_value.slice(0, i)
+               }
+               var reg = matrix.substr(0, this.value.length).replace(/_+/g,
+                  function(a) {
+                        return "\\d{1," + a.length + "}"
+                  }).replace(/[+()]/g, "\\$&");
+               reg = new RegExp("^" + reg + "$");
+               if (!reg.test(this.value) || this.value.length < 5 || keyCode > 47 && keyCode < 58) this.value = new_value;
+               if (event.type == "blur" && this.value.length < 5)  this.value = ""
+            }
+            input.addEventListener("input", mask, false);
+            input.addEventListener("focus", mask, false);
+            input.addEventListener("blur", mask, false);
+            input.addEventListener("keydown", mask, false)
+         });
+
+
          // если первая буква в имени маленькая то переделывать ее в большую
          userName[i].onblur = function() {
             if (/  +/.test(userName[i].value)) {
-               let newUserName = userName[i].value.replace(/  +/g, ' ').replace(/^\s+/g, '').replace(/\s*$/,'');
-               userName[i].value = newUserName;
+               let correctUserName = userName[i].value.replace(/  +/g, ' ').replace(/^\s+/g, '').replace(/\s*$/,'');
+               userName[i].value = correctUserName;
             };
-            let newUserName = userName[i].value.split(" ").map(e => e[0].toUpperCase() + e.slice(1)).join(" ");
-            userName[i].value = newUserName
+            let correctUserName = userName[i].value.split(" ").map(e => e[0].toUpperCase() + e.slice(1)).join(" ");
+            userName[i].value = correctUserName
          };
-      };
+      }
 
       // если два дефисса и пробела заменять его на один
       userMess.onblur = function() {
@@ -388,7 +423,8 @@ window.addEventListener('DOMContentLoaded', function () {
                }
             }
 
-            const formPopup = document.querySelector("form:not([class])");
+            const popup = document.querySelector('.popup'),
+               formPopup = document.querySelector("form:not([class])");
             if (userForm[i] === formPopup){
                statusMessage.style.cssText = 'color: white;';
             }
@@ -400,35 +436,36 @@ window.addEventListener('DOMContentLoaded', function () {
             for (let val of formData.entries()){
                body[val[0]] = val[1];
             };
-            postData(body,
-               ()=>{
+            postData(body)
+               .then(()=>{
                   statusMessage.textContent = successMessage;
                   userForm[i].reset();
-               },
-               (error)=> {
+               })
+               .catch((error)=> {
                   statusMessage.textContent = errorMessage;
                   console.error(error);
-               }
-            );
-            setTimeout(function() {statusMessage.remove();}, 5000);
+               });
+            setTimeout(function() {statusMessage.remove();popup.style.display = "none"}, 5000);
          });
 
-         const postData = (body, outputData, errorData)=> {
-            const request = new XMLHttpRequest();
-            request.addEventListener('readystatechange', ()=>{
-               if (request.readyState !== 4){
-                  return;
-               }
-               if (request.status === 200){
-                  outputData();
-               } else {
-                  errorData(request.status);
-               }
-            });
-   
-            request.open('POST', './server.php');
-            request.setRequestHeader('Content-Type', 'application/json');
-            request.send(JSON.stringify(body));
+         const postData = (body) => {
+            return new Promise((resolve, reject) =>{
+               const request = new XMLHttpRequest();
+               request.addEventListener('readystatechange', ()=>{
+                  if (request.readyState !== 4){
+                     return;
+                  }
+                  if (request.status === 200){
+                     resolve();
+                  } else {
+                     reject(request.status);
+                  }
+               });
+
+               request.open('POST', './server.php');
+               request.setRequestHeader('Content-Type', 'application/json');
+               request.send(JSON.stringify(body));
+            })
          };
       };
 
