@@ -2,7 +2,6 @@ window.addEventListener('DOMContentLoaded', function () {
    'use strict';
 
    // Таймер
-
    const countTimer = (deadLine)=> {
 
       let timerId = null,
@@ -70,6 +69,7 @@ window.addEventListener('DOMContentLoaded', function () {
    // countTimer('3 sept 2021');
 
    // Меню
+
    const toggleMenu = ()=> {
 
       let btnMenu = document.querySelector('.menu'),
@@ -353,9 +353,14 @@ window.addEventListener('DOMContentLoaded', function () {
             input.addEventListener("keydown", mask, false)
          });
 
-
-         // если первая буква в имени маленькая то переделывать ее в большую
-         userName[i].onblur = function() {
+         userName[i].onblur = ()=> {
+            if (userName[i].value.length < 2){
+               formBtn[i].disabled = true;
+               alert ("Поле с имененм не может содержать меньше одного символа")
+            } else {
+               formBtn[i].disabled = false;
+            }
+            // если первая буква в имени маленькая то переделывать ее в большую
             let correctUserName;
             if (/  +/.test(userName[i].value)) {
                correctUserName = userName[i].value.replace(/  +/g, ' ').replace(/^\s+/g, '').replace(/\s*$/,'');
@@ -364,6 +369,15 @@ window.addEventListener('DOMContentLoaded', function () {
             correctUserName = userName[i].value.split(" ").map(e => e[0].toUpperCase() + e.slice(1)).join(" ");
             userName[i].value = correctUserName;
          };
+
+         userPhone[i].onblur = ()=> {
+            if (userPhone[i].value.length < 12){
+               formBtn[i].disabled = true;
+               alert ("Поле с номером телефона не может содержать меньше семи символов")
+            } else {
+               formBtn[i].disabled = false;
+            }
+         }
       }
 
       // если два дефисса и пробела заменять его на один
