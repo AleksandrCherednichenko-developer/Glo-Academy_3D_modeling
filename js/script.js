@@ -316,7 +316,6 @@ window.addEventListener('DOMContentLoaded', function () {
          userName[i].onblur = ()=> {
             if (userName[i].value.length < 2){
                alert ("Поле с имененм не может содержать меньше одного символа");
-               return;
             }
             // если первая буква в имени маленькая то переделывать ее в большую
             let correctUserName;
@@ -332,14 +331,12 @@ window.addEventListener('DOMContentLoaded', function () {
             const emailForm = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
             if (!(emailForm.test(userEmail[i].value))){
                alert ("Поле с email заполненно не верно");
-               return;
             }
          }
 
          userPhone[i].onblur = ()=> {
             if (userPhone[i].value.length < 12){
                alert ("Поле с номером телефона не может содержать меньше семи символов");
-               return;
             }
          }
       }
@@ -425,20 +422,18 @@ window.addEventListener('DOMContentLoaded', function () {
                userFormEmail = userForm[i].querySelectorAll('.form-email'),
                userFormPhone = userForm[i].querySelectorAll('.form-phone');
 
-            //проверка введенных на правильность и на наличие пустой строки
-            for (let i = 0; i < userFormInput.length; i++){
-               const emailForm = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
-               if (userFormName[i].value.length < 2 ||
-                  emailForm.test(userFormEmail[i].value ||
-                  userFormPhone[i].value.length < 12)){
-                  alert ('Вы ввели некоректные данные! Проверьте правильность заполненных полей');
-                  return;
-               }
-               if (userFormInput[i].value === ''){
-                  alert ('Все поля должны быть заполненны! Заполние оставшиеся поля и повторите отправку.');
-                  return;
-               }
-            }
+            // for (let i = 0; i < userFormInput.length; i++){
+            //    if (userFormName[i].value.length < 2){
+            //       console.log('aaa');
+            //       return;
+            //    }
+            // }
+            // //проверка на наличие пустой строки
+            //    if (userFormInput[i].value === ''){
+            //       alert ('Все поля должны быть заполненны! Заполние оставшиеся поля и повторите отправку.');
+            //       return;
+            //    }
+            // }
 
             const popup = document.querySelector('.popup'),
                formPopup = document.querySelector("form:not([class])");
@@ -466,6 +461,7 @@ window.addEventListener('DOMContentLoaded', function () {
                   console.error(error);
                });
             setTimeout(function() {statusMessage.remove();popup.style.display = "none"}, 5000);
+
          });
 
          const postData = (body) => {
