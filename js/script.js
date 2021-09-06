@@ -29,45 +29,6 @@ window.addEventListener('DOMContentLoaded', function () {
    };
    countTimer('21 sept 2021');
 
-   // const countTimer = (deadLine)=> {
-   //    let timerHours = document.querySelector('#timer-hours'),
-   //       timerMinutes = document.querySelector('#timer-minutes'),
-   //       timerSeconds = document.querySelector('#timer-seconds'),
-   //       timerAction = document.querySelector('.timer-action'),
-   //       dateStop =new Date(deadLine).getTime(),
-   //       dateNow = new Date().getTime(),
-   //       timeRemaining = (dateStop - dateNow)/1000;
-
-   //    const getTimeRemaning = ()=> {
-   //       let seconds = Math.floor(timeRemaining % 60),
-   //          minutes = Math.floor((timeRemaining / 60) % 60),
-   //          hours = Math.floor(timeRemaining / 60 / 60);
-   //       return{
-   //          'timeRemaining': timeRemaining,
-   //          'hours': hours,
-   //          'minutes': minutes,
-   //          'seconds': seconds,
-   //       };
-   //    };
-
-   //    const updateClock = ()=> {
-   //       let timer = getTimeRemaning();
-   //       if (timeRemaining < 0){
-   //          timerAction.textContent = 'Акция завершенна';
-   //          timerHours.textContent = '00';
-   //          timerMinutes.textContent = '00';
-   //          timerSeconds.textContent = '00';
-   //       } else {
-   //          timerHours.textContent = ('0' + timer.hours).slice(-2);
-   //          timerMinutes.textContent = ('0' + timer.minutes).slice(-2);
-   //          timerSeconds.textContent = ('0' + timer.seconds).slice(-2);
-   //       }
-   //    };
-   //    updateClock();
-   //    setInterval(updateClock, 1000);
-   // };
-   // countTimer('3 sept 2021');
-
    // Меню
 
    const toggleMenu = ()=> {
