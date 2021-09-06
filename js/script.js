@@ -30,7 +30,6 @@ window.addEventListener('DOMContentLoaded', function () {
    countTimer('21 sept 2021');
 
    // Меню
-
    const toggleMenu = ()=> {
 
       let btnMenu = document.querySelector('.menu'),
@@ -316,10 +315,8 @@ window.addEventListener('DOMContentLoaded', function () {
 
          userName[i].onblur = ()=> {
             if (userName[i].value.length < 2){
-               formBtn[i].disabled = true;
-               alert ("Поле с имененм не может содержать меньше одного символа")
-            } else {
-               formBtn[i].disabled = false;
+               alert ("Поле с имененм не может содержать меньше одного символа");
+               return;
             }
             // если первая буква в имени маленькая то переделывать ее в большую
             let correctUserName;
@@ -331,12 +328,18 @@ window.addEventListener('DOMContentLoaded', function () {
             userName[i].value = correctUserName;
          };
 
+         userEmail[i].onblur = ()=> {
+            const emailForm = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+            if (!(emailForm.test(userEmail[i].value))){
+               alert ("Поле с email заполненно не верно");
+               return;
+            }
+         }
+
          userPhone[i].onblur = ()=> {
             if (userPhone[i].value.length < 12){
-               formBtn[i].disabled = true;
-               alert ("Поле с номером телефона не может содержать меньше семи символов")
-            } else {
-               formBtn[i].disabled = false;
+               alert ("Поле с номером телефона не может содержать меньше семи символов");
+               return;
             }
          }
       }
@@ -417,8 +420,20 @@ window.addEventListener('DOMContentLoaded', function () {
          userForm[i].addEventListener('submit', (event)=> {
             event.preventDefault();
 
-            const userFormInput = userForm[i].querySelectorAll('input');
+            const userFormInput = userForm[i].querySelectorAll('input'),
+               userFormName = userForm[i].querySelectorAll('.form-name'),
+               userFormEmail = userForm[i].querySelectorAll('.form-email'),
+               userFormPhone = userForm[i].querySelectorAll('.form-phone');
+
+            //проверка введенных на правильность и на наличие пустой строки
             for (let i = 0; i < userFormInput.length; i++){
+               const emailForm = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+               if (userFormName[i].value.length < 2 ||
+                  emailForm.test(userFormEmail[i].value ||
+                  userFormPhone[i].value.length < 12)){
+                  alert ('Вы ввели некоректные данные! Проверьте правильность заполненных полей');
+                  return;
+               }
                if (userFormInput[i].value === ''){
                   alert ('Все поля должны быть заполненны! Заполние оставшиеся поля и повторите отправку.');
                   return;
