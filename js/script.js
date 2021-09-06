@@ -27,7 +27,7 @@ window.addEventListener('DOMContentLoaded', function () {
       timerId = setInterval(updateClock, 1000);
 
    };
-   countTimer('3 sept 2021');
+   countTimer('21 sept 2021');
 
    // const countTimer = (deadLine)=> {
    //    let timerHours = document.querySelector('#timer-hours'),
