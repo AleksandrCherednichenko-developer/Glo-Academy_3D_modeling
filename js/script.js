@@ -27,7 +27,7 @@ window.addEventListener('DOMContentLoaded', function () {
       timerId = setInterval(updateClock, 1000);
 
    };
-   countTimer('21 sept 2021');
+   countTimer('9 sept 2021');
 
    // Меню
    const toggleMenu = ()=> {
@@ -73,8 +73,9 @@ window.addEventListener('DOMContentLoaded', function () {
       let popup = document.querySelector('.popup'),
          popupContent = document.querySelector('.popup-content'),
          popupBtn = document.querySelectorAll('.popup-btn'),
+         popupInput = popup.querySelectorAll('input'),
          clientWidth = document.documentElement.clientWidth;
-      
+
       popupBtn.forEach((elem) => {
          elem.addEventListener('click', () => {
             popup.style.display = 'block';
@@ -89,15 +90,24 @@ window.addEventListener('DOMContentLoaded', function () {
          });
       });
 
+      const valueNull = ()=> {
+         for (let i = 0; i < popupInput.length; i++){
+            popupInput[i].value = '';
+            popupInput[i].style.boxShadow = 'none';
+         }
+      };
+
       popup.addEventListener('click', (event)=> {
          let target = event.target;
 
          if(target.classList.contains('popup-close')){
             popup.style.display = 'none';
+            valueNull();
          } else {
             target = target.closest('.popup-content');
             if(!target){
                popup.style.display = 'none';
+               valueNull();
             }
          }
 
@@ -315,8 +325,12 @@ window.addEventListener('DOMContentLoaded', function () {
 
          userName[i].onblur = ()=> {
             if (userName[i].value.length < 2){
-               alert ("Поле с имененм не может содержать меньше одного символа");
+               // alert ("Поле с имененм не может содержать меньше одного символа");
+               userName[i].style.boxShadow = '0 0 15px red';
+            } else {
+               userName[i].style.boxShadow = 'none';
             }
+
             // если первая буква в имени маленькая то переделывать ее в большую
             let correctUserName;
             if (/  +/.test(userName[i].value)) {
@@ -328,15 +342,21 @@ window.addEventListener('DOMContentLoaded', function () {
          };
 
          userEmail[i].onblur = ()=> {
-            const emailForm = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
-            if (!(emailForm.test(userEmail[i].value))){
-               alert ("Поле с email заполненно не верно");
+            let reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+            if (!(reg.test(userEmail[i].value))){
+               // alert ('Введенный email некорректен!');
+               userEmail[i].style.boxShadow = '0 0 15px red';
+            } else {
+               userEmail[i].style.boxShadow = 'none';
             }
          }
 
          userPhone[i].onblur = ()=> {
             if (userPhone[i].value.length < 12){
-               alert ("Поле с номером телефона не может содержать меньше семи символов");
+               // alert ("Поле с номером телефона не может содержать меньше семи символов");
+               userPhone[i].style.boxShadow = '0 0 15px red';
+            } else {
+               userPhone[i].style.boxShadow = 'none';
             }
          }
       }
@@ -418,22 +438,26 @@ window.addEventListener('DOMContentLoaded', function () {
             event.preventDefault();
 
             const userFormInput = userForm[i].querySelectorAll('input'),
-               userFormName = userForm[i].querySelectorAll('.form-name'),
-               userFormEmail = userForm[i].querySelectorAll('.form-email'),
-               userFormPhone = userForm[i].querySelectorAll('.form-phone');
+            userFormName = userForm[i].querySelector('.form-name'),
+            userFormEmail = userForm[i].querySelector('.form-email'),
+            userFormPhone = userForm[i].querySelector('.form-phone');
 
-            // for (let i = 0; i < userFormInput.length; i++){
-            //    if (userFormName[i].value.length < 2){
-            //       console.log('aaa');
-            //       return;
-            //    }
-            // }
-            // //проверка на наличие пустой строки
-            //    if (userFormInput[i].value === ''){
-            //       alert ('Все поля должны быть заполненны! Заполние оставшиеся поля и повторите отправку.');
-            //       return;
-            //    }
-            // }
+            // проверка данных при отправке на пустую строку
+            for (let i = 0; i < userFormInput.length; i++){
+               if (userFormInput[i].value === ''){
+                  alert ('Все поля должны быть заполненны! Заполние оставшиеся поля и повторите отправку.');
+                  return;
+               }
+            }
+
+            // проверка данных при отправке на правильность данных
+            let reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+            if (userFormName.value.length < 2 ||
+               !(reg.test(userFormEmail.value)) ||
+               userFormPhone.value.length < 12 ){
+               alert ('Вы ввели неверные значения! Повторите попытку');
+               return;
+            }
 
             const popup = document.querySelector('.popup'),
                formPopup = document.querySelector("form:not([class])");
@@ -460,8 +484,7 @@ window.addEventListener('DOMContentLoaded', function () {
                   statusMessage.textContent = errorMessage;
                   console.error(error);
                });
-            setTimeout(function() {statusMessage.remove();popup.style.display = "none"}, 5000);
-
+            setTimeout(function() {statusMessage.remove(); popup.style.display = "none"}, 5000);
          });
 
          const postData = (body) => {
