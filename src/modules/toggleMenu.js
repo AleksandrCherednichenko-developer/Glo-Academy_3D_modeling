@@ -9,7 +9,7 @@ const toggleMenu = ()=> {
    };
 
    // плавный переход при нажатии на элементы меню
-   const smoothLinks = document.querySelectorAll('a[href^="#"]');
+   const smoothLinks = document.querySelectorAll('menu ul a[href^="#"]');
    for (let smoothLink of smoothLinks) {
       smoothLink.addEventListener('click', function (e) {
          e.preventDefault();
@@ -20,6 +20,15 @@ const toggleMenu = ()=> {
          });
       });
    }
+   const mainLink = document.querySelector('main a[href^="#"]');
+   mainLink.addEventListener('click', function (e) {
+      e.preventDefault();
+      const id = mainLink.getAttribute('href');
+      document.querySelector(id).scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+      });
+   });
 
    btnMenu.addEventListener('click', handlerMenu);
 

@@ -11,7 +11,7 @@ import calc from './modules/calc';
 import sendForm from './modules/sendForm';
 
 // Таймер
-countTimer('9 sept 2021');
+countTimer('13 sept 2021');
 // Меню
 toggleMenu();
 // Попап
