@@ -2,45 +2,32 @@ window.addEventListener('DOMContentLoaded', function () {
    'use strict';
 
    // Таймер
-   setInterval(()=> {
-      const countTimer = (deadLine)=> {
-      let timerHours = document.querySelector('#timer-hours'),
+   const countTimer = (deadLine)=> {
+
+      let timerId = null,
+         timerHours = document.querySelector('#timer-hours'),
          timerMinutes = document.querySelector('#timer-minutes'),
          timerSeconds = document.querySelector('#timer-seconds'),
-         timerAction = document.querySelector('.timer-action'),
-         dateStop =new Date(deadLine).getTime(),
-         dateNow = new Date().getTime(),
-         timeRemaining = (dateStop - dateNow)/1000;
-         const getTimeRemaning = ()=> {
-            let seconds = Math.floor(timeRemaining % 60),
-               minutes = Math.floor((timeRemaining / 60) % 60),
-               hours = Math.floor(timeRemaining / 60 / 60);
-            return{
-               'timeRemaining': timeRemaining,
-               'hours': hours,
-               'minutes': minutes,
-               'seconds': seconds,
-            };
-         };
+         timerAction = document.querySelector('.timer-action');
 
-         if (timeRemaining < 0){
+      function updateClock() {
+         const timeRemaining = (new Date(deadLine) - new Date()) / 1000;
+         if (timeRemaining <= 0) {
             timerAction.textContent = 'Акция завершенна';
-            timerHours.textContent = '00';
-            timerMinutes.textContent = '00';
-            timerSeconds.textContent = '00';
-         } else {
-            const updateClock = ()=> {
-               let timer = getTimeRemaning();
-
-               timerHours.textContent = ('0' + timer.hours).slice(-2);
-               timerMinutes.textContent = ('0' + timer.minutes).slice(-2);
-               timerSeconds.textContent = ('0' + timer.seconds).slice(-2);
-            };
-            updateClock();
+            clearInterval(timerId);
          }
-      };
-      countTimer('3 sept 2021');
-   }, 1000);
+         const hours = timeRemaining > 0 ? Math.floor(timeRemaining / 60 / 60) % 24 : 0;
+         const minutes = timeRemaining > 0 ? Math.floor(timeRemaining / 60) % 60 : 0;
+         const seconds = timeRemaining > 0 ? Math.floor(timeRemaining ) % 60 : 0;
+         timerHours.textContent = hours < 10 ? '0' + hours : hours;
+         timerMinutes.textContent = minutes < 10 ? '0' + minutes : minutes;
+         timerSeconds.textContent = seconds < 10 ? '0' + seconds : seconds;
+      }
+      updateClock();
+      timerId = setInterval(updateClock, 1000);
+
+   };
+   countTimer('9 sept 2021');
 
    // Меню
    const toggleMenu = ()=> {
@@ -86,8 +73,9 @@ window.addEventListener('DOMContentLoaded', function () {
       let popup = document.querySelector('.popup'),
          popupContent = document.querySelector('.popup-content'),
          popupBtn = document.querySelectorAll('.popup-btn'),
+         popupInput = popup.querySelectorAll('input'),
          clientWidth = document.documentElement.clientWidth;
-      
+
       popupBtn.forEach((elem) => {
          elem.addEventListener('click', () => {
             popup.style.display = 'block';
@@ -102,15 +90,24 @@ window.addEventListener('DOMContentLoaded', function () {
          });
       });
 
+      const valueNull = ()=> {
+         for (let i = 0; i < popupInput.length; i++){
+            popupInput[i].value = '';
+            popupInput[i].style.boxShadow = 'none';
+         }
+      };
+
       popup.addEventListener('click', (event)=> {
          let target = event.target;
 
          if(target.classList.contains('popup-close')){
             popup.style.display = 'none';
+            valueNull();
          } else {
             target = target.closest('.popup-content');
             if(!target){
                popup.style.display = 'none';
+               valueNull();
             }
          }
 
@@ -293,7 +290,6 @@ window.addEventListener('DOMContentLoaded', function () {
             }
          });
 
-
          // маска для ввода номера телефона
          [].forEach.call( userPhone, function(input) {
             var keyCode;
@@ -327,16 +323,42 @@ window.addEventListener('DOMContentLoaded', function () {
             input.addEventListener("keydown", mask, false)
          });
 
+         userName[i].onblur = ()=> {
+            if (userName[i].value.length < 2){
+               // alert ("Поле с имененм не может содержать меньше одного символа");
+               userName[i].style.boxShadow = '0 0 15px red';
+            } else {
+               userName[i].style.boxShadow = 'none';
+            }
 
-         // если первая буква в имени маленькая то переделывать ее в большую
-         userName[i].onblur = function() {
+            // если первая буква в имени маленькая то переделывать ее в большую
+            let correctUserName;
             if (/  +/.test(userName[i].value)) {
-               let correctUserName = userName[i].value.replace(/  +/g, ' ').replace(/^\s+/g, '').replace(/\s*$/,'');
+               correctUserName = userName[i].value.replace(/  +/g, ' ').replace(/^\s+/g, '').replace(/\s*$/,'');
                userName[i].value = correctUserName;
             };
-            let correctUserName = userName[i].value.split(" ").map(e => e[0].toUpperCase() + e.slice(1)).join(" ");
-            userName[i].value = correctUserName
+            correctUserName = userName[i].value.split(" ").map(e => e[0].toUpperCase() + e.slice(1)).join(" ");
+            userName[i].value = correctUserName;
          };
+
+         userEmail[i].onblur = ()=> {
+            let reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+            if (!(reg.test(userEmail[i].value))){
+               // alert ('Введенный email некорректен!');
+               userEmail[i].style.boxShadow = '0 0 15px red';
+            } else {
+               userEmail[i].style.boxShadow = 'none';
+            }
+         }
+
+         userPhone[i].onblur = ()=> {
+            if (userPhone[i].value.length < 12){
+               // alert ("Поле с номером телефона не может содержать меньше семи символов");
+               userPhone[i].style.boxShadow = '0 0 15px red';
+            } else {
+               userPhone[i].style.boxShadow = 'none';
+            }
+         }
       }
 
       // если два дефисса и пробела заменять его на один
@@ -415,12 +437,26 @@ window.addEventListener('DOMContentLoaded', function () {
          userForm[i].addEventListener('submit', (event)=> {
             event.preventDefault();
 
-            const userFormInput = userForm[i].querySelectorAll('input');
+            const userFormInput = userForm[i].querySelectorAll('input'),
+            userFormName = userForm[i].querySelector('.form-name'),
+            userFormEmail = userForm[i].querySelector('.form-email'),
+            userFormPhone = userForm[i].querySelector('.form-phone');
+
+            // проверка данных при отправке на пустую строку
             for (let i = 0; i < userFormInput.length; i++){
                if (userFormInput[i].value === ''){
                   alert ('Все поля должны быть заполненны! Заполние оставшиеся поля и повторите отправку.');
                   return;
                }
+            }
+
+            // проверка данных при отправке на правильность данных
+            let reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+            if (userFormName.value.length < 2 ||
+               !(reg.test(userFormEmail.value)) ||
+               userFormPhone.value.length < 12 ){
+               alert ('Вы ввели неверные значения! Повторите попытку');
+               return;
             }
 
             const popup = document.querySelector('.popup'),
@@ -437,7 +473,10 @@ window.addEventListener('DOMContentLoaded', function () {
                body[val[0]] = val[1];
             };
             postData(body)
-               .then(()=>{
+               .then((response)=>{
+                  if(response.status !== 200){
+                     throw new Error('status network not 200');
+                  }
                   statusMessage.textContent = successMessage;
                   userForm[i].reset();
                })
@@ -445,27 +484,18 @@ window.addEventListener('DOMContentLoaded', function () {
                   statusMessage.textContent = errorMessage;
                   console.error(error);
                });
-            setTimeout(function() {statusMessage.remove();popup.style.display = "none"}, 5000);
+            setTimeout(function() {statusMessage.remove(); popup.style.display = "none"}, 5000);
          });
 
          const postData = (body) => {
-            return new Promise((resolve, reject) =>{
-               const request = new XMLHttpRequest();
-               request.addEventListener('readystatechange', ()=>{
-                  if (request.readyState !== 4){
-                     return;
-                  }
-                  if (request.status === 200){
-                     resolve();
-                  } else {
-                     reject(request.status);
-                  }
-               });
-
-               request.open('POST', './server.php');
-               request.setRequestHeader('Content-Type', 'application/json');
-               request.send(JSON.stringify(body));
-            })
+            return fetch('./server.php',
+            {
+               method: 'POST',
+               headers: {
+                  'Content-Type': 'application/json'
+               },
+               body: JSON.stringify(body),
+            });
          };
       };
 
